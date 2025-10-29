@@ -1,13 +1,25 @@
+import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
+import z from "zod";
+import { loginSchema } from "../lib/auth-schema";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 const Login = () => {
+  const form = useForm<z.infer<typeof loginSchema>>({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
+
   return (
     <section className="bg-white">
       <div className="grid grid-cols-1">
         <div className="flex items-center justify-center px-4 py-10 bg-white sm:px-6 lg:px-8 sm:py-16 lg:py-24">
           <div className="xl:w-full xl:max-w-sm 2xl:max-w-md xl:mx-auto">
             <h2 className="text-3xl font-bold leading-tight text-black sm:text-4xl">
-              Log in to Compass
+              Log in with Auth
             </h2>
             <p className="mt-2 text-base text-gray-600">
               Don&apos;t have an account?{" "}
@@ -21,47 +33,35 @@ const Login = () => {
 
             <form className="mt-8">
               <div className="space-y-5">
-                <div>
-                  <label className="text-base font-medium text-gray-900">
-                    {" "}
-                    Email address{" "}
-                  </label>
-                  <div className="mt-2.5">
-                    <input
-                      type="email"
-                      name="email"
-                      placeholder="Enter email to get started"
-                      className="entry"
-                    />
+                {(["email", "password"] as const).map((field) => (
+                  <div key={field}>
+                    <div className="flex items-center justify-between">
+                      <label className="text-base font-medium text-gray-900">
+                        {field === "email" ? "Email address" : "Password"}
+                      </label>
+                      {field === "password" && (
+                        <a
+                          href="/forgot-password"
+                          className="text-sm font-medium text-indigo-600 hover:underline hover:text-indigo-700 focus:text-indigo-700"
+                        >
+                          Forgot password?
+                        </a>
+                      )}
+                    </div>
+                    <div className="mt-2.5">
+                      <input
+                        type={field}
+                        placeholder={
+                          field === "email"
+                            ? "eg: johndoe@example.com"
+                            : "Enter your password"
+                        }
+                        className="entry"
+                        {...form.register(field)}
+                      />
+                    </div>
                   </div>
-                </div>
-
-                <div>
-                  <div className="flex items-center justify-between">
-                    <label className="text-base font-medium text-gray-900">
-                      {" "}
-                      Password{" "}
-                    </label>
-
-                    <a
-                      href="#"
-                      title=""
-                      className="text-sm font-medium text-indigo-600 hover:underline hover:text-indigo-700 focus:text-indigo-700"
-                    >
-                      {" "}
-                      Forgot password?{" "}
-                    </a>
-                  </div>
-                  <div className="mt-2.5">
-                    <input
-                      type="password"
-                      name="password"
-                      placeholder="Enter your password"
-                      className="entry"
-                    />
-                  </div>
-                </div>
-
+                ))}
                 <div>
                   <button type="submit" className="submit__btn">
                     Log in

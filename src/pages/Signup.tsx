@@ -1,13 +1,26 @@
+import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
+import z from "zod";
+import { signupSchema } from "../lib/auth-schema";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 const Signup = () => {
+  const form = useForm<z.infer<typeof signupSchema>>({
+    resolver: zodResolver(signupSchema),
+    defaultValues: {
+      name: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
+  });
   return (
     <section className="bg-white">
       <div className="grid grid-cols-1">
         <div className="flex items-center justify-center px-4 py-10 bg-white sm:px-6 lg:px-8 sm:py-16 lg:py-24">
           <div className="xl:w-full xl:max-w-sm 2xl:max-w-md xl:mx-auto">
             <h2 className="text-3xl font-bold leading-tight text-black sm:text-4xl">
-              Sign up to Compass
+              Sign up with Auth
             </h2>
             <p className="mt-2 text-base text-gray-600">
               Already have an account?{" "}
@@ -21,54 +34,33 @@ const Signup = () => {
 
             <form action="#" method="POST" className="mt-8">
               <div className="space-y-5">
-                <div>
-                  <label className="text-base font-medium text-gray-900">
-                    {" "}
-                    Email address{" "}
-                  </label>
-                  <div className="mt-2.5">
-                    <input
-                      type="email"
-                      name=""
-                      id=""
-                      placeholder="Enter email to get started"
-                      className="entry"
-                    />
+                {(
+                  ["name", "email", "password", "confirmPassword"] as const
+                ).map((field) => (
+                  <div>
+                    <label className="text-base font-medium text-gray-900">
+                      {field === "confirmPassword"
+                        ? "Confirm Password"
+                        : field.charAt(0).toUpperCase() + field.slice(1)}
+                    </label>
+                    <div className="mt-2.5">
+                      <input
+                        type={field}
+                        placeholder={
+                          field === "name"
+                            ? "John Doe"
+                            : field === "email"
+                            ? "johndoe@example.com"
+                            : field == "password"
+                            ? "At least 8 characters"
+                            : undefined
+                        }
+                        className="entry"
+                        {...form.register(field)}
+                      />
+                    </div>
                   </div>
-                </div>
-
-                <div>
-                  <label className="text-base font-medium text-gray-900">
-                    {" "}
-                    Password{" "}
-                  </label>
-                  <div className="mt-2.5">
-                    <input
-                      type="password"
-                      name=""
-                      id=""
-                      placeholder="Enter your password"
-                      className="entry"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="text-base font-medium text-gray-900">
-                    {" "}
-                    Confirm password{" "}
-                  </label>
-                  <div className="mt-2.5">
-                    <input
-                      type="password"
-                      name=""
-                      id=""
-                      placeholder="Confirm your password"
-                      className="entry"
-                    />
-                  </div>
-                </div>
-
+                ))}
                 <div className="flex items-center">
                   <input
                     type="checkbox"
