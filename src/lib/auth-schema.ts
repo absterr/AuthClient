@@ -1,7 +1,10 @@
 import { object, string, email } from "zod";
 
 const getEmailSchema = () =>
-  email({ error: "Email is required" }).min(6, "A valid email is required");
+  email({ error: "A valid email is required" }).min(
+    6,
+    "A valid email is required"
+  );
 
 const getNameSchema = () =>
   string({ error: "Name is required" })

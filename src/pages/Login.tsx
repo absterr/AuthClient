@@ -1,8 +1,10 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import z from "zod";
 import { loginSchema } from "../lib/auth-schema";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
+import { loginUser } from "../lib/auth-api";
 
 const Login = () => {
   const form = useForm<z.infer<typeof loginSchema>>({
@@ -13,6 +15,16 @@ const Login = () => {
     },
   });
 
+  const loginMutation = useMutation({
+    mutationFn: loginUser,
+    onSuccess: (data) => console.log("Success.", data),
+    onError: (error) => console.error("Error!", error),
+  });
+
+  const onSubmit = (values: z.infer<typeof loginSchema>) => {
+    loginMutation.mutate(values);
+  };
+
   return (
     <section className="bg-white">
       <div className="grid grid-cols-1">
@@ -21,7 +33,7 @@ const Login = () => {
             <h2 className="text-3xl font-bold leading-tight text-black sm:text-4xl">
               Log in with Auth
             </h2>
-            <p className="mt-2 text-base text-gray-600">
+            <p className="pt-2 text-base text-gray-600">
               Don&apos;t have an account?{" "}
               <Link
                 to={"/signup"}
@@ -31,8 +43,8 @@ const Login = () => {
               </Link>
             </p>
 
-            <form className="mt-8">
-              <div className="space-y-5">
+            <form className="pt-8" onSubmit={form.handleSubmit(onSubmit)}>
+              <div className="flex flex-col gap-5">
                 {(["email", "password"] as const).map((field) => (
                   <div key={field}>
                     <div className="flex items-center justify-between">
@@ -48,7 +60,7 @@ const Login = () => {
                         </a>
                       )}
                     </div>
-                    <div className="mt-2.5">
+                    <div className="pt-2.5">
                       <input
                         type={field}
                         placeholder={
@@ -59,6 +71,11 @@ const Login = () => {
                         className="entry"
                         {...form.register(field)}
                       />
+                      {form.formState.errors[field] && (
+                        <p className="text-sm text-red-500 pt-1">
+                          {form.formState.errors[field].message}
+                        </p>
+                      )}
                     </div>
                   </div>
                 ))}
@@ -70,7 +87,7 @@ const Login = () => {
               </div>
             </form>
 
-            <div className="mt-3 space-y-3">
+            <div className="pt-3">
               <button type="button" className="google__btn">
                 <div className="absolute inset-y-0 left-0 p-4">
                   <svg
