@@ -25,11 +25,7 @@ const Signup = () => {
       toast.success("Email verification link sent", {
         description: "A verification link has been sent to the provided email.",
       }),
-    onError: (error) => {
-      if (error.message === "A user with this email already exists")
-        toast.error(error.message);
-      else toast.error("Unable to log in. Try again or something.");
-    },
+    onError: (error) => toast.error(error.message),
   });
 
   const isPending = signupMutation.isPending;

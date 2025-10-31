@@ -21,15 +21,7 @@ const ForgotPassword = () => {
       toast.success("Password reset link sent", {
         description: "A password reset link has been sent to your email.",
       }),
-    onError: (error) => {
-      if (
-        ["Invalid email", "Too many requests. Try again later"].includes(
-          error.message
-        )
-      )
-        toast.error(error.message);
-      else toast.error("Unable to log in. Try again or something.");
-    },
+    onError: (error) => toast.error(error.message),
   });
 
   const isPending = forgotPasswordMutation.isPending;

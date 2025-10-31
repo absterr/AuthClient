@@ -21,16 +21,7 @@ const Login = () => {
   const loginMutation = useMutation({
     mutationFn: loginUser,
     onSuccess: () => navigate("/", { replace: true }),
-    onError: (error) => {
-      if (
-        [
-          "Invalid email or password",
-          "This user does not have a credential account",
-        ].includes(error.message)
-      )
-        toast.error(error.message);
-      else toast.error("Unable to log in. Try again or something.");
-    },
+    onError: (error) => toast.error(error.message),
   });
 
   const isPending = loginMutation.isPending;

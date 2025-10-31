@@ -7,6 +7,16 @@ import type {
 } from "./auth-schema";
 import api from "./axios";
 
+const handleFallbackMessage = (error: unknown, fallbackMessage: string) => {
+  if (error instanceof Error) {
+    const axiosError = error as any;
+    const message = axiosError?.response?.data?.message || error.message;
+    if (message === "Internal server error") throw new Error(fallbackMessage);
+    throw new Error(message);
+  }
+  throw new Error(fallbackMessage);
+};
+
 export const loginUser = async (values: z.infer<typeof loginSchema>) => {
   try {
     const res = await api.post("/auth/login", values, {
@@ -14,7 +24,7 @@ export const loginUser = async (values: z.infer<typeof loginSchema>) => {
     });
     return res.data;
   } catch (error) {
-    console.log("An error occured.", error);
+    handleFallbackMessage(error, "Unable to log in. Try again or something.");
   }
 };
 
@@ -23,7 +33,7 @@ export const signupUser = async (values: z.infer<typeof signupSchema>) => {
     const res = await api.post("/auth/signup", values);
     return res.data;
   } catch (error) {
-    console.log("An error occured.", error);
+    handleFallbackMessage(error, "Couldn't sign up. Try again or something.");
   }
 };
 
@@ -34,7 +44,12 @@ export const verifyUserEmail = async (token: string) => {
     });
     return res.data;
   } catch (error) {
-    console.log("An error occured.", error);
+    if (error instanceof Error) {
+      const axiosError = error as any;
+      const message = axiosError?.response?.data?.message || error.message;
+      throw new Error(message);
+    }
+    throw new Error("Verification email failed");
   }
 };
 
@@ -45,7 +60,10 @@ export const forgotUserPassword = async (
     const res = await api.post("/auth/password/forgot", values);
     return res.data;
   } catch (error) {
-    console.log("An error occured.", error);
+    handleFallbackMessage(
+      error,
+      "Couldn't send password reset link. Try again or something."
+    );
   }
 };
 
@@ -54,7 +72,7 @@ export const verifyPasswordResetToken = async (token: string) => {
     const res = await api.get(`/auth/password/reset?token=${token}`);
     return res.data;
   } catch (error) {
-    console.log("An error occured.", error);
+    handleFallbackMessage(error, "Unable to verify token.");
   }
 };
 
@@ -65,6 +83,9 @@ export const resetUserPassword = async (
     const res = await api.post("/auth/password/reset", values);
     return res.data;
   } catch (error) {
-    console.log("An error occured.", error);
+    handleFallbackMessage(
+      error,
+      "Couldn't reset account password. Try again or whatever."
+    );
   }
 };

@@ -47,11 +47,7 @@ const ResetPassword = () => {
       navigate("/login", { replace: true });
       toast.success("Password reset successful. Login to continue");
     },
-    onError: (error) => {
-      if (error.message === "Invalid or expired token.")
-        toast.error(error.message);
-      else toast.error("Unable to log in. Try again or something.");
-    },
+    onError: (error) => toast.error(error.message),
   });
 
   const pending = resetPasswordMutation.isPending;
