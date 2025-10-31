@@ -1,5 +1,5 @@
 import type z from "zod";
-import type { loginSchema, signupSchema } from "./auth-schema";
+import type { emailSchema, loginSchema, signupSchema } from "./auth-schema";
 import api from "./axios";
 
 export const loginUser = async (values: z.infer<typeof loginSchema>) => {
@@ -27,6 +27,17 @@ export const verifyUserEmail = async (token: string) => {
     const res = await api.post(`/auth/email/verify?token=${token}`, null, {
       headers: { "User-Agent": navigator.userAgent },
     });
+    return res.data;
+  } catch (error) {
+    console.log("An error occured.", error);
+  }
+};
+
+export const forgotUserPassword = async (
+  values: z.infer<typeof emailSchema>
+) => {
+  try {
+    const res = await api.post("/auth/password/forgot", values);
     return res.data;
   } catch (error) {
     console.log("An error occured.", error);

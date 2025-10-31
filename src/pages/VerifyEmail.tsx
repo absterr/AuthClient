@@ -7,10 +7,7 @@ const verifyEmail = () => {
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token");
   const [isPending, setPending] = useState(true);
-  const [response, setResponse] = useState<{
-    success: boolean;
-    message: string;
-  }>({ success: false, message: "" });
+  const [response, setResponse] = useState({ success: false, message: "" });
 
   useEffect(() => {
     if (!token) return;

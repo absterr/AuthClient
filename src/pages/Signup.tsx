@@ -1,11 +1,11 @@
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import z from "zod";
-import { signupSchema } from "../lib/auth-schema";
-import { useMutation } from "@tanstack/react-query";
-import { signupUser } from "../lib/auth-api";
 import LoadingSpinner from "../components/LoadingSpinner";
+import { signupUser } from "../lib/auth-api";
+import { signupSchema } from "../lib/auth-schema";
 
 const Signup = () => {
   const form = useForm<z.infer<typeof signupSchema>>({
@@ -33,7 +33,7 @@ const Signup = () => {
   return (
     <section className="bg-white">
       <div className="grid grid-cols-1">
-        <div className="flex items-center justify-center px-4 py-10 bg-white sm:px-6 lg:px-8 sm:py-16 lg:py-24">
+        <div className="flex items-center justify-center px-4 py-10 sm:px-6 lg:px-8 sm:py-16 lg:py-24">
           <div className="xl:w-full xl:max-w-sm 2xl:max-w-md xl:mx-auto">
             <h2 className="text-3xl font-bold leading-tight text-black sm:text-4xl">
               Sign up with Auth
