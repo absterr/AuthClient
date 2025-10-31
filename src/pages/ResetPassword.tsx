@@ -2,15 +2,17 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import type z from "zod";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { resetUserPassword, verifyPasswordResetToken } from "../lib/auth-api";
 import { resetPasswordSchema } from "../lib/auth-schema";
+import { toast } from "sonner";
 
 const ResetPassword = () => {
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token");
+  const navigate = useNavigate();
   const [isPending, setPending] = useState(true);
   const [response, setResponse] = useState({ success: false, message: "" });
 
@@ -41,8 +43,15 @@ const ResetPassword = () => {
 
   const resetPasswordMutation = useMutation({
     mutationFn: resetUserPassword,
-    onSuccess: (data) => console.log("Success.", data),
-    onError: (error) => console.error("Error!", error),
+    onSuccess: () => {
+      navigate("/login", { replace: true });
+      toast.success("Password reset successful. Login to continue");
+    },
+    onError: (error) => {
+      if (error.message === "Invalid or expired token.")
+        toast.error(error.message);
+      else toast.error("Unable to log in. Try again or something.");
+    },
   });
 
   const pending = resetPasswordMutation.isPending;

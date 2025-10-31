@@ -1,13 +1,15 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "sonner";
 import z from "zod";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { loginUser } from "../lib/auth-api";
 import { loginSchema } from "../lib/auth-schema";
 
 const Login = () => {
+  const navigate = useNavigate();
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -18,8 +20,17 @@ const Login = () => {
 
   const loginMutation = useMutation({
     mutationFn: loginUser,
-    onSuccess: (data) => console.log("Success.", data),
-    onError: (error) => console.error("Error!", error),
+    onSuccess: () => navigate("/", { replace: true }),
+    onError: (error) => {
+      if (
+        [
+          "Invalid email or password",
+          "This user does not have a credential account",
+        ].includes(error.message)
+      )
+        toast.error(error.message);
+      else toast.error("Unable to log in. Try again or something.");
+    },
   });
 
   const isPending = loginMutation.isPending;

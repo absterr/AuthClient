@@ -2,6 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
+import { toast } from "sonner";
 import z from "zod";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { signupUser } from "../lib/auth-api";
@@ -20,8 +21,15 @@ const Signup = () => {
 
   const signupMutation = useMutation({
     mutationFn: signupUser,
-    onSuccess: (data) => console.log("Success", data),
-    onError: (error) => console.error("Error", error),
+    onSuccess: () =>
+      toast.success("Email verification link sent", {
+        description: "A verification link has been sent to the provided email.",
+      }),
+    onError: (error) => {
+      if (error.message === "A user with this email already exists")
+        toast.error(error.message);
+      else toast.error("Unable to log in. Try again or something.");
+    },
   });
 
   const isPending = signupMutation.isPending;
