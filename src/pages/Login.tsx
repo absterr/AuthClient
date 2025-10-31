@@ -5,6 +5,7 @@ import z from "zod";
 import { loginSchema } from "../lib/auth-schema";
 import { useMutation } from "@tanstack/react-query";
 import { loginUser } from "../lib/auth-api";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const Login = () => {
   const form = useForm<z.infer<typeof loginSchema>>({
@@ -20,6 +21,8 @@ const Login = () => {
     onSuccess: (data) => console.log("Success.", data),
     onError: (error) => console.error("Error!", error),
   });
+
+  const isPending = loginMutation.isPending;
 
   const onSubmit = (values: z.infer<typeof loginSchema>) => {
     loginMutation.mutate(values);
@@ -80,15 +83,23 @@ const Login = () => {
                   </div>
                 ))}
                 <div>
-                  <button type="submit" className="submit__btn">
-                    Log in
+                  <button
+                    type="submit"
+                    className="submit__btn"
+                    disabled={isPending}
+                  >
+                    {isPending ? <LoadingSpinner /> : "Log in"}
                   </button>
                 </div>
               </div>
             </form>
 
             <div className="pt-3">
-              <button type="button" className="google__btn">
+              <button
+                type="button"
+                className="google__btn"
+                disabled={isPending}
+              >
                 <div className="absolute inset-y-0 left-0 p-4">
                   <svg
                     className="w-6 h-6 text-rose-500"
