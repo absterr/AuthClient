@@ -1,19 +1,39 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import type z from "zod";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { forgotUserPassword } from "../lib/auth-api";
 import { emailSchema } from "../lib/auth-schema";
+import checkSession from "../lib/checkSession";
 
 const ForgotPassword = () => {
+  const navigate = useNavigate();
   const form = useForm<z.infer<typeof emailSchema>>({
     resolver: zodResolver(emailSchema),
     defaultValues: {
       email: "",
     },
   });
+
+  // * THIS APPROACH IS TO OPTIMISTICALLY REDIRECT USERS
+  // * IT IS NOT SECURE
+  // useEffect(() => {
+  //   if (document.cookie.includes("logged_in=true")) {
+  //     navigate("/", { replace: true });
+  //   }
+  // }, [navigate]);
+
+  // * THIS APPROACH IS MORE SECURE BUT REQUIRES AN API CALL
+  useEffect(() => {
+    (async () => {
+      const session = await checkSession();
+      if (session) navigate("/", { replace: true });
+    })();
+  }, [navigate]);
 
   const forgotPasswordMutation = useMutation({
     mutationFn: forgotUserPassword,

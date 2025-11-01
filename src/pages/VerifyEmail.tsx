@@ -18,8 +18,12 @@ const verifyEmail = () => {
           success: res.success,
           message: res.message,
         });
-      } catch (error) {
-        console.log("An error occured.", error);
+      } catch (error: any) {
+        if (error instanceof Error) {
+          setResponse({ success: false, message: error.message });
+        } else {
+          setResponse({ success: false, message: "Unable to verify email" });
+        }
       } finally {
         setPending(false);
       }
@@ -35,19 +39,16 @@ const verifyEmail = () => {
 
   return (
     <section className="flex flex-col items-center h-screen pt-64">
-      <h1 className="mb-2 text-2xl font-bold text-black">
-        {response.success
-          ? "Email verified"
-          : response.message === "Invalid or expired token"
-          ? response.message
-          : "Unable to verify email"}
-      </h1>
-      <p className="text-gray-600">
-        {response.success
-          ? "Your email has been successfully verified"
-          : response.message === "Invalid or expired token" &&
-            "Your token is invalid or has expired"}
-      </p>
+      <h1 className="mb-2 text-2xl font-bold text-black">{response.message}</h1>
+      {response.success ? (
+        <p className="text-gray-600">
+          "Your email has been successfully verified"
+        </p>
+      ) : (
+        response.message === "Invalid or expired token" && (
+          <p className="text-gray-600">Your token is invalid or has expired</p>
+        )
+      )}
       {response.success && (
         <div className="pt-6">
           <button className="p-4 bg-indigo-600 text-white rounded-2xl transition-colors hover:bg-indigo-700 focus:outline-none">

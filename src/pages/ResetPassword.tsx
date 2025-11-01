@@ -3,11 +3,12 @@ import { useMutation } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { toast } from "sonner";
 import type z from "zod";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { resetUserPassword, verifyPasswordResetToken } from "../lib/auth-api";
 import { resetPasswordSchema } from "../lib/auth-schema";
-import { toast } from "sonner";
+import checkSession from "../lib/checkSession";
 
 const ResetPassword = () => {
   const [searchParams] = useSearchParams();
@@ -15,6 +16,22 @@ const ResetPassword = () => {
   const navigate = useNavigate();
   const [isPending, setPending] = useState(true);
   const [response, setResponse] = useState({ success: false, message: "" });
+
+  // * THIS APPROACH IS TO OPTIMISTICALLY REDIRECT USERS
+  // * IT IS NOT SECURE
+  // useEffect(() => {
+  //   if (document.cookie.includes("logged_in=true")) {
+  //     navigate("/", { replace: true });
+  //   }
+  // }, [navigate]);
+
+  // * THIS APPROACH IS MORE SECURE BUT REQUIRES AN API CALL
+  useEffect(() => {
+    (async () => {
+      const session = await checkSession();
+      if (session) navigate("/", { replace: true });
+    })();
+  }, [navigate]);
 
   useEffect(() => {
     if (!token) return;

@@ -44,12 +44,7 @@ export const verifyUserEmail = async (token: string) => {
     });
     return res.data;
   } catch (error) {
-    if (error instanceof Error) {
-      const axiosError = error as any;
-      const message = axiosError?.response?.data?.message || error.message;
-      throw new Error(message);
-    }
-    throw new Error("Verification email failed");
+    handleFallbackMessage(error, "Unable to verify email");
   }
 };
 
