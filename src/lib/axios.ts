@@ -8,13 +8,17 @@ const api = axios.create({
 api.interceptors.response.use(
   (res) => res,
   async (error) => {
-    if (error.response?.status === 401 && !error.config._retry) {
+    if (
+      error.response?.status === 401 &&
+      !error.config._retry &&
+      error.config.url !== "/auth/refresh"
+    ) {
       error.config._retry = true;
       try {
         await api.post("/auth/refresh", null, { withCredentials: true });
         return api(error.config);
       } catch (error) {
-        window.location.href = "/login";
+        throw error;
       }
     }
     throw error;

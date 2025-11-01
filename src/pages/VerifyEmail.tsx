@@ -51,9 +51,13 @@ const verifyEmail = () => {
       )}
       {response.success && (
         <div className="pt-6">
-          <button className="p-4 bg-indigo-600 text-white rounded-2xl transition-colors hover:bg-indigo-700 focus:outline-none">
-            <Link to={"/"}>Go to home</Link>
-          </button>
+          <Link
+            to={"/"}
+            role="button"
+            className="p-4 bg-indigo-600 text-white rounded-2xl transition-colors hover:bg-indigo-700 focus:outline-none"
+          >
+            Go to home
+          </Link>
         </div>
       )}
     </section>
