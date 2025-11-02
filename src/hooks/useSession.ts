@@ -1,3 +1,5 @@
+import { useQuery } from "@tanstack/react-query";
+
 const checkSession = async () => {
   try {
     const res = await fetch(`${import.meta.env.VITE_API_URL}/session`, {
@@ -11,4 +13,11 @@ const checkSession = async () => {
   }
 };
 
-export default checkSession;
+export const useSession = () => {
+  return useQuery({
+    queryKey: ["session"],
+    queryFn: checkSession,
+    staleTime: 1000 * 60 * 5,
+    retry: false,
+  });
+};

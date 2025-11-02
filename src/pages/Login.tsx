@@ -1,6 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
-import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -8,7 +7,6 @@ import z from "zod";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { loginUser } from "../lib/auth-api";
 import { loginSchema } from "../lib/auth-schema";
-import checkSession from "../lib/checkSession";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -19,22 +17,6 @@ const Login = () => {
       password: "",
     },
   });
-
-  // * THIS APPROACH IS TO OPTIMISTICALLY REDIRECT USERS
-  // * IT IS NOT SECURE
-  // useEffect(() => {
-  //   if (document.cookie.includes("logged_in=true")) {
-  //     navigate("/", { replace: true });
-  //   }
-  // }, [navigate]);
-
-  // * THIS APPROACH IS MORE SECURE BUT REQUIRES AN API CALL
-  useEffect(() => {
-    (async () => {
-      const session = await checkSession();
-      if (session) navigate("/", { replace: true });
-    })();
-  }, [navigate]);
 
   const loginMutation = useMutation({
     mutationFn: loginUser,
