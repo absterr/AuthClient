@@ -32,7 +32,7 @@ It uses a custom Axios instance (`api`) with credentials and interceptors to int
 
 Ensure **Bun** (or **Node.js** and **npm**) is installed.
 
-### Clone and Install
+#### Clone and Install
 
 ```bash
 git clone <repo-url>
@@ -41,7 +41,7 @@ bun install     # or `npm install` if using npm
 bun run dev     # or `npm run dev`
 ```
 
-### Configuration
+#### Configuration
 
 Create a .env file in the project root with
 
@@ -51,8 +51,9 @@ VITE_API_URL=https://your-auth-backend.example.com
 
 ---
 
-# Project structure
+## File structure
 
+```
 AuthClient/
 ├── src/
 │ ├── lib/
@@ -72,10 +73,11 @@ AuthClient/
 ├── vite.config.ts
 ├── package.json
 └── README.md
+```
 
 ---
 
-# Future work
+### Future work
 
 - Add Oauth support for Google, Github, etc
 
