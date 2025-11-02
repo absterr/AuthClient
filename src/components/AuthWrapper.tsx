@@ -29,6 +29,7 @@ const AuthWrapper = ({ children }: { children: React.ReactNode }) => {
   //     }
   //   }, [navigate, isAuthRoute]);
 
+  // * THIS IS MORE SECURE BUT REQUIRES AN API CALL
   useEffect(() => {
     if (isLoading) return;
     if (!isAuthRoute && !isAuthenticated) {
