@@ -8,10 +8,11 @@
   <img src="https://img.shields.io/badge/Axios-5A29E4?logo=axios&logoColor=white" alt="Axios Badge"/>
   <img src="https://img.shields.io/badge/React%20Router-CA4245?logo=reactrouter&logoColor=white" alt="React Router Badge"/>
   <img src="https://img.shields.io/badge/Bun-000000?logo=bun&logoColor=white" alt="Bun Badge"/>
+  <img src="https://img.shields.io/badge/Zod-3066BE?logo=zod&logoColor=white" alt="Zod Badge"/>
   <img src="https://img.shields.io/badge/License-MIT-green.svg" alt="MIT License"/>
 </p>
 
-**AuthClient** is a React frontend application built to demonstrate how to connect to NodeAuth.  
+**AuthClient** is a React frontend application built to demonstrate how to connect to **NodeAuth**.  
 It is built with **Vite**, **React**, **Tailwind**, **React Query**, **axios**, **react-router-dom**, and **Bun**.
 
 The app handles:
@@ -78,7 +79,5 @@ AuthClient/
 ---
 
 ### Future work
-
-- Add Oauth support for Google, Github, etc
 
 ---

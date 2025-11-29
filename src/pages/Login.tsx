@@ -1,5 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -10,6 +11,7 @@ import { loginSchema } from "../lib/auth-schema";
 
 const Login = () => {
   const navigate = useNavigate();
+  const [isGoogleLoading, setGoogleLoading] = useState(false);
   const form = useForm<z.infer<typeof loginSchema>>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -18,16 +20,21 @@ const Login = () => {
     },
   });
 
-  const loginMutation = useMutation({
+  const { isPending, mutate } = useMutation({
     mutationFn: loginUser,
     onSuccess: () => navigate("/", { replace: true }),
     onError: (error) => toast.error(error.message),
   });
 
-  const isPending = loginMutation.isPending;
+  const pending = isPending || isGoogleLoading;
 
   const onSubmit = (values: z.infer<typeof loginSchema>) => {
-    loginMutation.mutate(values);
+    mutate(values);
+  };
+
+  const handleGoogleSignIn = () => {
+    setGoogleLoading(true);
+    window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`;
   };
 
   return (
@@ -88,7 +95,7 @@ const Login = () => {
                   <button
                     type="submit"
                     className="submit__btn"
-                    disabled={isPending}
+                    disabled={pending}
                   >
                     {isPending ? <LoadingSpinner /> : "Log in"}
                   </button>
@@ -100,7 +107,8 @@ const Login = () => {
               <button
                 type="button"
                 className="google__btn"
-                disabled={isPending}
+                disabled={pending}
+                onClick={handleGoogleSignIn}
               >
                 <div className="absolute inset-y-0 left-0 p-4">
                   <svg

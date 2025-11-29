@@ -1,5 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import { toast } from "sonner";
@@ -9,6 +10,7 @@ import { signupUser } from "../lib/auth-api";
 import { signupSchema } from "../lib/auth-schema";
 
 const Signup = () => {
+  const [isGoogleLoading, setGoogleLoading] = useState(false);
   const form = useForm<z.infer<typeof signupSchema>>({
     resolver: zodResolver(signupSchema),
     defaultValues: {
@@ -19,7 +21,7 @@ const Signup = () => {
     },
   });
 
-  const signupMutation = useMutation({
+  const { isPending, mutate } = useMutation({
     mutationFn: signupUser,
     onSuccess: () =>
       toast.success("Email verification link sent", {
@@ -28,11 +30,17 @@ const Signup = () => {
     onError: (error) => toast.error(error.message),
   });
 
-  const isPending = signupMutation.isPending;
+  const pending = isPending || isGoogleLoading;
 
   const onSubmit = (values: z.infer<typeof signupSchema>) => {
-    signupMutation.mutate(values);
+    mutate(values);
   };
+
+  const handleGoogleSignIn = () => {
+    setGoogleLoading(true);
+    window.location.href = `${import.meta.env.VITE_API_URL}/auth/google`;
+  };
+
 
   return (
     <section className="bg-white">
@@ -127,7 +135,7 @@ const Signup = () => {
 
                 <div>
                   <button
-                    disabled={isPending}
+                    disabled={pending}
                     type="submit"
                     className="submit__btn"
                   >
@@ -141,7 +149,8 @@ const Signup = () => {
               <button
                 type="button"
                 className="google__btn"
-                disabled={isPending}
+                disabled={pending}
+                onClick={handleGoogleSignIn}
               >
                 <div className="absolute inset-y-0 left-0 p-4">
                   <svg

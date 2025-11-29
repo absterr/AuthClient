@@ -14,14 +14,9 @@ api.interceptors.response.use(
       error.config.url !== "/auth/refresh"
     ) {
       error.config._retry = true;
-      try {
-        await api.post("/auth/refresh", null, { withCredentials: true });
-        return api(error.config);
-      } catch (error) {
-        throw error;
-      }
+      await api.post("/auth/refresh", null, { withCredentials: true });
+      return api(error.config);
     }
-    throw error;
   }
 );
 
